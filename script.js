@@ -24,34 +24,21 @@ function isValidEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
+
+// Check required fields
+function checkRequired(inputArr) {
+    inputArr.forEach(function(input) {
+        if(input.value.trim() === '') { //trim remove blanckspace
+            showError(input, `Votre ${input.placeholder} est requis`); // E6 template string > ${} insert value placeholder before string
+        } else {
+            showSuccess(input);
+        }
+    });
+}
+
 //Event listeners 
 form.addEventListener('submit', function(e) {
     e.preventDefault(); // intercept submit
     
-    if(username.value === '') {
-        showError(username, 'Votre nom est requis')
-    } else {
-        showSuccess(username);
-    }
-
-    if(email.value === '') {
-        showError(email, 'Un email est requis')
-    } else if(!isValidEmail(email.value)) {
-        showError(email, 'Veuillez entrer une adresse e-mail valide')
-    } else {
-        showSuccess(email);
-    }
-
-    if(password.value === '') {
-        showError(password, 'Un mot de passe est requis')
-    } else {
-        showSuccess(password);
-    }
-
-    if(password2.value === '') {
-        showError(password2, 'La confirmation de votre mot de passe est requise')
-    } else {
-        showSuccess(password2);
-    }
+    checkRequired([username, email, password, password2]);
 });
-
