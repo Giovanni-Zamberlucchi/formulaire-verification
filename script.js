@@ -19,26 +19,62 @@ function showSuccess(input) {
     formControl.className = 'form-control success';
 }
 
-// Check email is valid
-function isValidEmail(email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}
-
 // Check required fields
 function checkRequired(inputArr) {
     inputArr.forEach(function(input) {
         if(input.value.trim() === '') { //trim remove blanckspace
-            showError(input, `Votre ${input.placeholder} est requis`); // E6 template string > ${} insert value placeholder before string
+            showError(input, `Votre ${getFieldName(input)} est requis`); // E6 template string > ${} insert placeholder
         } else {
             showSuccess(input);
         }
     });
 }
 
+// Define FieldName
+function getFieldName(input) {
+    return input.placeholder;
+}
+
+// Check Lenght
+function checkLength(input, min, max) {
+    if(input.value.length == 0) {
+        showError(input, `Votre ${getFieldName(input)} est requis`); 
+    } else
+    if (input.value.length < min) {
+        showError(input, `Votre ${getFieldName(input)} doit contenir au moins ${min} lettres.`);
+    } else if(input.value.length > max) {
+        showError(input, `Votre ${getFieldName(input)} doit contenir au maximum ${max} lettres;`);
+    } else {
+        showSuccess(input);
+    }
+}
+
+// Check email is valid
+function checkEmail(input) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(input.value.length == 0) {
+        showError(input, `Votre ${getFieldName(input)} est requis`);
+    }
+    else if(re.test(input.value.trim())) {
+        showSuccess(input);
+    } else {
+        showError(input, `Votre email n'est pas valide.`)
+    }
+}
+
+//Check Conform Password
+function checkPasswordMatch(input1, input2) {
+    if(input1.value !== input2.value) {
+        showError(input2, 'Vos mots de passe ne sont pas conforme.');
+    }
+}
+
 //Event listeners 
 form.addEventListener('submit', function(e) {
     e.preventDefault(); // intercept submit
-    
     checkRequired([username, email, password, password2]);
+    checkLength(username, 2, 30);
+    checkLength(password, 8, 25);
+    checkEmail(email);
+    checkPasswordMatch(password, password2);
 });
